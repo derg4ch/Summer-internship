@@ -37,8 +37,6 @@ namespace Work_with_db.Tables
 
             modelBuilder.Entity<Brand>(entity =>
             {
-                entity.ToTable("Brands");
-
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Country).IsRequired().HasMaxLength(50);
