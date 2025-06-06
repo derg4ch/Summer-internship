@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Work_with_db;
 using Work_with_db.Repo;
 using Work_with_db.Tables;
 
@@ -13,6 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
