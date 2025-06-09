@@ -34,5 +34,10 @@ namespace Work_with_db.Repo
         {
             return await set.Include(o => o.User).Include(o => o.OrderItems).ThenInclude(oi => oi.ClothingItem).Where(o => o.Status.ToLower() == status.ToLower()).ToListAsync();
         }
+        public async Task<List<Order>> GetPagedWithDetailsAsync(int skip, int take)
+        {
+            return await set.Include(o => o.User).Include(o => o.OrderItems).ThenInclude(oi => oi.ClothingItem).OrderBy(o => o.Id).Skip(skip).Take(take).ToListAsync();
+        }
+
     }
 }

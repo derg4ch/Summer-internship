@@ -13,5 +13,6 @@ namespace Work_with_db.Repo
         Task<Order?> GetByIdWithDetailsAsync(int id);
         Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId);
         Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status);
+        Task<List<Order>> GetPagedWithDetailsAsync(int skip, int take);
     }
 }

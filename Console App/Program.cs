@@ -19,7 +19,13 @@ class Program
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
 
-        List<Size> sizes = new List<Size> { new Size { Name = "XS" }, new Size { Name = "S" }, new Size { Name = "M" }, new Size { Name = "L" }, new Size { Name = "XL" } };
+        List<Size> sizes = new List<Size> { 
+            new Size { Name = "XS" }, 
+            new Size { Name = "S" }, 
+            new Size { Name = "M" }, 
+            new Size { Name = "L" }, 
+            new Size { Name = "XL" } 
+        };
         context.Sizes.AddRange(sizes);
         context.SaveChanges();
 

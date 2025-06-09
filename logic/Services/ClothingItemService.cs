@@ -127,5 +127,25 @@ namespace Logic.Services
             await repo.DeleteAsync(entity);
             return true;
         }
+
+        public async Task<PagedList<ClothingItemInfoDto>> GetPagedClothingItemsAsync(int pageNumber, int pageSize)
+        {
+            int skip = (pageNumber - 1) * pageSize;
+            var items = await repo.GetPagedWithDetailsAsync(skip, pageSize);
+
+            var itemDtos = items.Select(item => new ClothingItemInfoDto
+            {
+                Id = item.Id,
+                Name = item.Name,
+                SizeId = item.SizeId,
+                SizeName = item.Size.Name,
+                BrandId = item.BrandId,
+                BrandName = item.Brand.Name,
+                Price = item.Price,
+                Quantity = item.Quantity
+            }).ToList();
+
+            return new PagedList<ClothingItemInfoDto>(itemDtos, pageNumber, pageSize);
+        }
     }
 }

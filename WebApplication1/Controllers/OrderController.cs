@@ -1,4 +1,5 @@
-﻿using Logic.dto.order;
+﻿using Logic;
+using Logic.dto.order;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -74,6 +75,13 @@ namespace Application.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+
+        [HttpGet("paginated")]
+        public async Task<ActionResult<PagedList<OrderInfoDto>>> GetPagedOrders(int pageNumber = 1, int pageSize = 10)
+        {
+            var pagedOrders = await service.GetPagedOrdersAsync(pageNumber, pageSize);
+            return Ok(pagedOrders);
         }
     }
 }

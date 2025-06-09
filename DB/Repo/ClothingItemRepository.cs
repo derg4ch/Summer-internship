@@ -23,5 +23,10 @@ namespace Work_with_db.Repo
         {
             return await set.Include(ci => ci.Size).Include(ci => ci.Brand).FirstOrDefaultAsync(ci => ci.Id == id);
         }
+
+        public async Task<IEnumerable<ClothingItem>> GetPagedWithDetailsAsync(int skip, int take)
+        {
+            return await set.Include(ci => ci.Size).Include(ci => ci.Brand).Skip(skip).Take(take).ToListAsync();
+        }
     }
 }

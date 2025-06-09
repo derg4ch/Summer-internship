@@ -1,4 +1,5 @@
-﻿using Logic.dto.clothing_item;
+﻿using Logic;
+using Logic.dto.clothing_item;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,6 +62,13 @@ namespace Application.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+
+        [HttpGet("paginated")]
+        public async Task<ActionResult<PagedList<ClothingItemInfoDto>>> GetPagedClothingItems(int pageNumber = 1, int pageSize = 10)
+        {
+            var pagedItems = await service.GetPagedClothingItemsAsync(pageNumber, pageSize);
+            return Ok(pagedItems);
         }
     }
 }

@@ -16,5 +16,6 @@ namespace Logic.Interfaces
         Task<OrderInfoDto> CreateAsync(OrderNewDto newDto);
         Task<OrderInfoDto?> UpdateStatusAsync(int id, OrderEditDto editDto);
         Task<bool> DeleteAsync(int id);
+        Task<PagedList<OrderInfoDto>> GetPagedOrdersAsync(int pageNumber, int pageSize);
     }
 }

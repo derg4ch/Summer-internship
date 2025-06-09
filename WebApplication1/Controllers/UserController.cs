@@ -1,4 +1,5 @@
-﻿using Logic.dto.users;
+﻿using Logic;
+using Logic.dto.users;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -105,6 +106,13 @@ namespace Application.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+
+        [HttpGet("paginated")]
+        public async Task<ActionResult<PagedList<UserInfoDto>>> GetPagedUsers(int pageNumber = 1, int pageSize = 10)
+        {
+            var pagedUsers = await service.GetPagedUsersAsync(pageNumber, pageSize);
+            return Ok(pagedUsers);
         }
     }
 }

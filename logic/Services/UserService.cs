@@ -175,5 +175,55 @@ namespace Logic.Services
             await repo.DeleteAsync(user);
             return true;
         }
+
+        //public async Task<PagedList<UserInfoDto>> GetPagedUsersAsync(int pageNumber, int pageSize)
+        //{
+        //    int skip = (pageNumber - 1) * pageSize;
+        //    int totalCount = await repo.GetTotalUsersCountAsync();
+        //    var users = await repo.GetPagedUsersAsync(skip, pageSize);
+
+        //    List<UserInfoDto> userDtos = new List<UserInfoDto>();
+
+        //    foreach (var user in users)
+        //    {
+        //        int ordersCount = await repo.GetOrdersCountByUserIdAsync(user.Id);
+
+        //        userDtos.Add(new UserInfoDto
+        //        {
+        //            Id = user.Id,
+        //            Username = user.Username,
+        //            Email = user.Email,
+        //            OrdersCount = ordersCount
+        //        });
+        //    }
+
+        //    return new PagedList<UserInfoDto>(userDtos, totalCount, pageNumber, pageSize);
+        //}
+        public async Task<PagedList<UserInfoDto>> GetPagedUsersAsync(int pageNumber, int pageSize)
+        {
+            int skip = (pageNumber - 1) * pageSize;
+            Console.WriteLine($"[DEBUG] pageNumber = {pageNumber}, pageSize = {pageSize}, skip = {skip}");
+
+            var users = await repo.GetPagedUsersAsync(skip, pageSize);
+            Console.WriteLine($"[DEBUG] users.Count = {users.Count}");
+
+            var userDtos = users.Select(u => new UserInfoDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Email = u.Email,
+                OrdersCount=users.Count
+            }).ToList();
+
+            Console.WriteLine($"[DEBUG] userDtos.Count = {userDtos.Count}");
+            foreach (var dto in userDtos)
+            {
+                Console.WriteLine($"[DEBUG] dto.Id = {dto.Id}, Username = {dto.Username}, Email = {dto.Email}");
+            }
+
+            var pagedList = new PagedList<UserInfoDto>(userDtos, pageNumber, pageSize);
+
+            return pagedList;
+        }
     }
 }

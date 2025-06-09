@@ -11,5 +11,6 @@ namespace Work_with_db.Repo
     {
         Task<IEnumerable<ClothingItem>> GetAllWithDetailsAsync();
         Task<ClothingItem?> GetByIdWithDetailsAsync(int id);
+        Task<IEnumerable<ClothingItem>> GetPagedWithDetailsAsync(int skip, int take);
     }
 }

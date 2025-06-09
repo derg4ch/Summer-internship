@@ -13,7 +13,7 @@ namespace Logic.Interfaces
         Task<UserInfoDto?> GetByEmailAsync(string email);
         Task<UserInfoDto?> GetUserWithOrdersAsync(int userId);
         Task<IEnumerable<UserInfoDto>> GetAllWithOrdersAsync();
-
+        Task<PagedList<UserInfoDto>> GetPagedUsersAsync(int pageNumber, int pageSize);
         Task<IEnumerable<UserInfoDto>> GetAllUsersAsync();
         Task<UserInfoDto?> GetUserByIdAsync(int id);
         Task<UserInfoDto> CreateUserAsync(UserNewDto newUser);

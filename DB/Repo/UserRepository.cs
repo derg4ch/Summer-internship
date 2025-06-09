@@ -37,7 +37,12 @@ namespace Work_with_db.Repo
 
         public async Task<int> GetOrdersCountByUserIdAsync(int userId)
         {
-            return await set.CountAsync(o => o.Id == userId);
+            return await context.Orders.CountAsync(o => o.UserId == userId);
+        }
+
+        public async Task<List<User>> GetPagedUsersAsync(int skip, int take)
+        {
+            return await set.OrderBy(p => p.Id).Skip(skip).Take(take).ToListAsync();
         }
     }
 }

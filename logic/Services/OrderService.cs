@@ -147,5 +147,24 @@ namespace Logic.Services
             await repo.DeleteAsync(order);
             return true;
         }
+
+        public async Task<PagedList<OrderInfoDto>> GetPagedOrdersAsync(int pageNumber, int pageSize)
+        {
+            int skip = (pageNumber - 1) * pageSize;
+            var orders = await repo.GetPagedWithDetailsAsync(skip, pageSize);
+
+            var orderDtos = orders.Select(order => new OrderInfoDto
+            {
+                Id = order.Id,
+                OrderDate = order.OrderDate,
+                Status = order.Status,
+                UserId = order.UserId,
+                UserEmail = order.User.Email,
+                TotalItems = order.OrderItems?.Sum(orderItem => orderItem.Quantity) ?? 0,
+                TotalPrice = order.OrderItems?.Sum(orderItem => orderItem.Quantity * orderItem.ClothingItem.Price) ?? 0m
+            }).ToList();
+
+            return new PagedList<OrderInfoDto>(orderDtos, pageNumber, pageSize);
+        }
     }
 }

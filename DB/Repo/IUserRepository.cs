@@ -14,5 +14,6 @@ namespace Work_with_db.Repo
         Task<User?> GetUserWithOrdersAsync(int userId);
         Task<IEnumerable<User>> GetAllWithOrdersAsync();
         Task<int> GetOrdersCountByUserIdAsync(int userId);
+        Task<List<User>> GetPagedUsersAsync(int skip, int take);
     }
 }
