@@ -46,33 +46,6 @@ namespace Logic.Services
             };
         }
 
-        public async Task<IEnumerable<BrandInfoDto>> GetAllWithClothingItemsAsync()
-        {
-            var brands = await repository.GetAllWithClothingItemsAsync();
-            return brands.Select(brand => new BrandInfoDto
-            {
-                Id = brand.Id,
-                Name = brand.Name,
-                Country = brand.Country
-            });
-        }
-
-        public async Task<BrandInfoDto?> GetByIdWithClothingItemsAsync(int id)
-        {
-            Brand? brand = await repository.GetByIdWithClothingItemsAsync(id);
-            if (brand == null)
-            {
-                return null;
-            }
-            
-            return new BrandInfoDto
-            {
-                Id = brand.Id,
-                Name = brand.Name,
-                Country = brand.Country
-            };
-        }
-
         public async Task<BrandInfoDto> CreateAsync(BrandNewDto newBrand)
         {
             Brand brand = new Brand

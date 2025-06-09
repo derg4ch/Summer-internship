@@ -42,7 +42,7 @@ namespace Work_with_db.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Work_with_db.Tables.ClothingItem", b =>

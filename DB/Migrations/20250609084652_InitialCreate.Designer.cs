@@ -12,7 +12,7 @@ using Work_with_db.Tables;
 namespace Work_with_db.Migrations
 {
     [DbContext(typeof(ClothingStoreDbContext))]
-    [Migration("20250606092530_InitialCreate")]
+    [Migration("20250609084652_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -45,7 +45,7 @@ namespace Work_with_db.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Work_with_db.Tables.ClothingItem", b =>

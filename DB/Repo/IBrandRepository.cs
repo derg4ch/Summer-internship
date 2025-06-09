@@ -9,7 +9,6 @@ namespace Work_with_db.Repo
 {
     public interface IBrandRepository : IGenericRepository<Brand>
     {
-        Task<IEnumerable<Brand>> GetAllWithClothingItemsAsync();
-        Task<Brand?> GetByIdWithClothingItemsAsync(int id);
+
     }
 }

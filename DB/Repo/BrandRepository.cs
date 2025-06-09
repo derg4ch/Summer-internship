@@ -14,15 +14,5 @@ namespace Work_with_db.Repo
         {
 
         }
-
-        public async Task<IEnumerable<Brand>> GetAllWithClothingItemsAsync()
-        {
-            return await set.Include(b => b.ClothingItems).ToListAsync();
-        }
-
-        public async Task<Brand?> GetByIdWithClothingItemsAsync(int id)
-        {
-            return await set.Include(b => b.ClothingItems).FirstOrDefaultAsync(b => b.Id == id);
-        }
     }
 }

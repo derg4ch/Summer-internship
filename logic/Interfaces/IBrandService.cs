@@ -11,8 +11,6 @@ namespace Logic.Interfaces
     {
         Task<IEnumerable<BrandInfoDto>> GetAllAsync();
         Task<BrandInfoDto?> GetByIdAsync(int id);
-        Task<IEnumerable<BrandInfoDto>> GetAllWithClothingItemsAsync();
-        Task<BrandInfoDto?> GetByIdWithClothingItemsAsync(int id);
         Task<BrandInfoDto> CreateAsync(BrandNewDto newBrand);
         Task<bool> UpdateAsync(int id, BrandEditDto updatedBrand);
         Task<bool> DeleteAsync(int id);

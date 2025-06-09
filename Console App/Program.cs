@@ -10,7 +10,7 @@ class Program
     public static void Main(string[] args)
     {
         var options = new DbContextOptionsBuilder<ClothingStoreDbContext>()
-            .UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Clothes;Trusted_Connection=True;")
+            .UseSqlServer("Server=DESKTOP-TRDJNPD;Database=Clothes;Trusted_Connection=True;Encrypt=False;")
             .Options;
 
         using var context = new ClothingStoreDbContext(options);
@@ -25,7 +25,16 @@ class Program
 
         Faker<Brand> brandFaker = new Faker<Brand>()
             .RuleFor(b => b.Name, f => f.Company.CompanyName())
-            .RuleFor(b => b.Country, f => f.Address.Country());
+            .RuleFor(b => b.Country, f =>
+            {
+                string country = f.Address.Country();
+                if (country.Length > 10)
+                {
+                    return country.Substring(0, 10);
+                }
+                else return country;
+            });
+
 
         List<Brand> brands = brandFaker.Generate(5);
         context.Brands.AddRange(brands);

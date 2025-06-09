@@ -13,11 +13,14 @@ namespace Logic.Services
     public class OrderItemService : IOrderItemService
     {
         private IOrderItemRepository repo;
+        private readonly IClothingItemRepository clothingItemRepo;
 
-        public OrderItemService(IOrderItemRepository repo)
+        public OrderItemService(IOrderItemRepository repo, IClothingItemRepository clothingItemRepo)
         {
             this.repo = repo;
+            this.clothingItemRepo = clothingItemRepo;
         }
+
 
         public async Task<IEnumerable<OrderItemInfoDto>> GetAllWithDetailsAsync()
         {
@@ -83,6 +86,20 @@ namespace Logic.Services
                 Quantity = newDto.Quantity
             };
 
+            ClothingItem? clothingItem = await clothingItemRepo.GetByIdAsync(newDto.ClothingItemId);
+            if (clothingItem == null)
+            {
+                throw new Exception("Clothing item not found.");
+            }
+
+            if (clothingItem.Quantity < newDto.Quantity)
+            {
+                throw new Exception("Not enough quantity in stock.");
+            }
+
+            clothingItem.Quantity -= newDto.Quantity;
+            await clothingItemRepo.UpdateAsync(clothingItem);
+
             await repo.AddAsync(orderItem);
 
             OrderItem? created = await repo.GetByIdWithDetailsAsync(orderItem.Id);
@@ -108,8 +125,30 @@ namespace Logic.Services
                 return null;
             }
 
+            ClothingItem? clothingItem = await clothingItemRepo.GetByIdAsync(orderItem.ClothingItemId);
+            if (clothingItem == null)
+            {
+                throw new Exception("Clothing item not found.");
+            }
+
+            int difference = editDto.Quantity - orderItem.Quantity;
+
+            if (difference > 0)
+            {
+                if (clothingItem.Quantity < difference)
+                {
+                    throw new Exception("Not enough quantity in stock.");
+                }
+                clothingItem.Quantity -= difference;
+            }
+            else if (difference < 0)
+            {
+                clothingItem.Quantity += -difference;
+            }
+
             orderItem.Quantity = editDto.Quantity;
             await repo.UpdateAsync(orderItem);
+            await clothingItemRepo.UpdateAsync(clothingItem);
 
             var updated = await repo.GetByIdWithDetailsAsync(id);
 

@@ -27,7 +27,7 @@ namespace Work_with_db.Repo
 
         public async Task<IEnumerable<OrderItem>> GetByOrderIdAsync(int orderId)
         {
-            return await set.Include(oi => oi.ClothingItem).Where(oi => oi.OrderId == orderId).ToListAsync();
+            return await set.Include(oi => oi.ClothingItem).Include(oi => oi.Order).Where(oi => oi.OrderId == orderId).ToListAsync();
         }
     }
 }

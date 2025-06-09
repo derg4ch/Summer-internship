@@ -27,12 +27,12 @@ namespace Work_with_db.Repo
 
         public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId)
         {
-            return await set.Include(o => o.OrderItems).Where(o => o.UserId == userId).ToListAsync();
+            return await set.Include(o => o.User).Include(o => o.OrderItems).ThenInclude(oi => oi.ClothingItem).Where(o => o.UserId == userId).ToListAsync();
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status)
         {
-            return await set.Where(o => o.Status == status).ToListAsync();
+            return await set.Include(o => o.User).Include(o => o.OrderItems).ThenInclude(oi => oi.ClothingItem).Where(o => o.Status.ToLower() == status.ToLower()).ToListAsync();
         }
     }
 }
