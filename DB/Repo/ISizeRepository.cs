@@ -11,5 +11,6 @@ namespace Work_with_db.Repo
     {
         Task<Size?> GetByNameAsync(string name);
         Task<IEnumerable<Size>> GetAllWithClothingItemsAsync();
+        Task<int> GetClothingItemsCountBySizeIdAsync(int sizeId);
     }
 }

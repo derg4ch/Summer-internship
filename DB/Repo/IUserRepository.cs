@@ -13,5 +13,6 @@ namespace Work_with_db.Repo
         Task<User?> GetByEmailAsync(string email);
         Task<User?> GetUserWithOrdersAsync(int userId);
         Task<IEnumerable<User>> GetAllWithOrdersAsync();
+        Task<int> GetOrdersCountByUserIdAsync(int userId);
     }
 }

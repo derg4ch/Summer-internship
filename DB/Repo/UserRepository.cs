@@ -34,5 +34,10 @@ namespace Work_with_db.Repo
         {
             return await set.Include(u => u.Orders).ToListAsync();
         }
+
+        public async Task<int> GetOrdersCountByUserIdAsync(int userId)
+        {
+            return await set.CountAsync(o => o.Id == userId);
+        }
     }
 }

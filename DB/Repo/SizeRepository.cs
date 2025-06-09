@@ -24,5 +24,10 @@ namespace Work_with_db.Repo
         {
             return await set.Include(s => s.ClothingItems).ToListAsync();
         }
+
+        public async Task<int> GetClothingItemsCountBySizeIdAsync(int sizeId)
+        {
+            return await context.ClothingItems.CountAsync(ci => ci.SizeId == sizeId);
+        }
     }
 }
