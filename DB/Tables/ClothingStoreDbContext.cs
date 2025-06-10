@@ -14,7 +14,6 @@ namespace Work_with_db.Tables
         {
 
         }
-
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<ClothingItem> ClothingItems { get; set; }

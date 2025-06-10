@@ -11,7 +11,6 @@ namespace Logic.dto.order
         public int UserId { get; set; }
         public DateTime OrderDate { get; set; }
         public string Status { get; set; } 
-
         public int ClothingItemId { get; set; }
         public int Quantity { get; set; }
     }

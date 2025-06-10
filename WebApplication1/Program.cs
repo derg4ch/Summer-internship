@@ -1,9 +1,12 @@
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Logic.Interfaces;
 using Logic.Services;
 using Microsoft.EntityFrameworkCore;
 using Work_with_db;
 using Work_with_db.Repo;
 using Work_with_db.Tables;
+using Logic.validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +32,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssembly(typeof(ValidateBrandEdit).Assembly);
 
 var app = builder.Build();
 
