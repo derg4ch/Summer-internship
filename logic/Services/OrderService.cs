@@ -21,66 +21,70 @@ namespace Logic.Services
 
         public async Task<IEnumerable<OrderInfoDto>> GetAllWithDetailsAsync()
         {
-            var orders = await repo.GetAllWithDetailsAsync();
-
-            return orders.Select(newOrder => new OrderInfoDto
+            var allOrders = await repo.GetAllWithDetailsAsync();
+         
+            return allOrders.Select(p => new OrderInfoDto
             {
-                Id = newOrder.Id,
-                OrderDate = newOrder.OrderDate,
-                Status = newOrder.Status,
-                UserId = newOrder.UserId,
-                UserEmail = newOrder.User.Email,
-                TotalItems = newOrder.OrderItems?.Sum(oi => oi.Quantity) ?? 0,
-                TotalPrice = newOrder.OrderItems?.Sum(oi => oi.Quantity * oi.ClothingItem.Price) ?? 0m
+                Id = p.Id,
+                OrderDate = p.OrderDate,
+                Status = p.Status,
+                UserId = p.UserId,
+                UserEmail = p.User.Email,
+                TotalItems = p.OrderItems?.Sum(orderItems => orderItems.Quantity) ?? 0,
+                TotalPrice = p.OrderItems?.Sum(orderItems => orderItems.Quantity * orderItems.ClothingItem.Price) ?? 0m
             });
         }
 
         public async Task<OrderInfoDto?> GetByIdWithDetailsAsync(int id)
         {
-            Order? order = await repo.GetByIdWithDetailsAsync(id);
-            if (order == null) return null;
-
-            return new OrderInfoDto
+            Order? orderById = await repo.GetByIdWithDetailsAsync(id);
+            if (orderById == null)
             {
-                Id = order.Id,
-                OrderDate = order.OrderDate,
-                Status = order.Status,
-                UserId = order.UserId,
-                UserEmail = order.User?.Email ?? "",
-                TotalItems = order.OrderItems?.Sum(oi => oi.Quantity) ?? 0,
-                TotalPrice = order.OrderItems?.Sum(oi => oi.Quantity * oi.ClothingItem.Price) ?? 0m
+                return null;
+            }
+            OrderInfoDto orderInfoDto = new OrderInfoDto
+            {
+                Id = orderById.Id,
+                OrderDate = orderById.OrderDate,
+                Status = orderById.Status,
+                UserId = orderById.UserId,
+                UserEmail = orderById.User.Email,
+                TotalItems = orderById.OrderItems?.Sum(orderItems => orderItems.Quantity) ?? 0,
+                TotalPrice = orderById.OrderItems?.Sum(orderItems => orderItems.Quantity * orderItems.ClothingItem.Price) ?? 0m
             };
+
+            return orderInfoDto;
         }
 
         public async Task<IEnumerable<OrderInfoDto>> GetOrdersByUserIdAsync(int userId)
         {
             var orders = await repo.GetOrdersByUserIdAsync(userId);
 
-            return orders.Select(order => new OrderInfoDto
+            return orders.Select(p => new OrderInfoDto
             {
-                Id = order.Id,
-                OrderDate = order.OrderDate,
-                Status = order.Status,
-                UserId = order.UserId,
-                UserEmail = order.User.Email,
-                TotalItems = order.OrderItems?.Sum(oi => oi.Quantity) ?? 0,
-                TotalPrice = order.OrderItems?.Sum(oi => oi.Quantity * oi.ClothingItem.Price) ?? 0m
+                Id = p.Id,
+                OrderDate = p.OrderDate,
+                Status = p.Status,
+                UserId = p.UserId,
+                UserEmail = p.User.Email,
+                TotalItems = p.OrderItems?.Sum(orderItems => orderItems.Quantity) ?? 0,
+                TotalPrice = p.OrderItems?.Sum(orderItems => orderItems.Quantity * orderItems.ClothingItem.Price) ?? 0m
             });
         }
 
         public async Task<IEnumerable<OrderInfoDto>> GetOrdersByStatusAsync(string status)
         {
-            var orders = await repo.GetOrdersByStatusAsync(status);
+            var ordersByStatus = await repo.GetOrdersByStatusAsync(status);
 
-            return orders.Select(order => new OrderInfoDto
+            return ordersByStatus.Select(p => new OrderInfoDto
             {
-                Id = order.Id,
-                OrderDate = order.OrderDate,
-                Status = order.Status,
-                UserId = order.UserId,
-                UserEmail = order.User.Email,
-                TotalItems = order.OrderItems?.Sum(oi => oi.Quantity) ?? 0,
-                TotalPrice = order.OrderItems?.Sum(oi => oi.Quantity * oi.ClothingItem.Price) ?? 0m
+                Id = p.Id,
+                OrderDate = p.OrderDate,
+                Status = p.Status,
+                UserId = p.UserId,
+                UserEmail = p.User.Email,
+                TotalItems = p.OrderItems?.Sum(orderItems => orderItems.Quantity) ?? 0,
+                TotalPrice = p.OrderItems?.Sum(orderItems => orderItems.Quantity * orderItems.ClothingItem.Price) ?? 0m
             });
         }
 
@@ -91,21 +95,13 @@ namespace Logic.Services
                 UserId = newDto.UserId,
                 OrderDate = newDto.OrderDate,
                 Status = newDto.Status,
-                OrderItems = new List<OrderItem>
-                {
-                    new OrderItem
-                    {
-                        ClothingItemId = newDto.ClothingItemId,
-                        Quantity = newDto.Quantity
-                    }
-                }
             };
 
             await repo.AddAsync(order);
 
             var created = await repo.GetByIdWithDetailsAsync(order.Id);
 
-            return new OrderInfoDto
+            OrderInfoDto orderInfoDto = new OrderInfoDto
             {
                 Id = created!.Id,
                 OrderDate = created.OrderDate,
@@ -115,36 +111,46 @@ namespace Logic.Services
                 TotalItems = created.OrderItems?.Sum(oi => oi.Quantity) ?? 0,
                 TotalPrice = created.OrderItems?.Sum(oi => oi.Quantity * oi.ClothingItem.Price) ?? 0m
             };
+
+            return orderInfoDto;
         }
 
         public async Task<OrderInfoDto?> UpdateStatusAsync(int id, OrderEditDto editDto)
         {
-            Order? order = await repo.GetByIdWithDetailsAsync(id);
-            if (order == null) return null;
+            Order? orderById = await repo.GetByIdWithDetailsAsync(id);
+            if (orderById == null)
+            {
+                return null;
+            }
 
-            order.Status = editDto.Status;
-            await repo.UpdateAsync(order);
+            orderById.Status = editDto.Status;
+            await repo.UpdateAsync(orderById);
 
             Order? updated = await repo.GetByIdWithDetailsAsync(id);
-
-            return new OrderInfoDto
+            
+            OrderInfoDto orderInfoDto = new OrderInfoDto
             {
                 Id = updated!.Id,
                 OrderDate = updated.OrderDate,
                 Status = updated.Status,
                 UserId = updated.UserId,
                 UserEmail = updated.User.Email,
-                TotalItems = updated.OrderItems?.Sum(oi => oi.Quantity) ?? 0,
-                TotalPrice = updated.OrderItems?.Sum(oi => oi.Quantity * oi.ClothingItem.Price) ?? 0m
+                TotalItems = updated.OrderItems?.Sum(orderItems => orderItems.Quantity) ?? 0,
+                TotalPrice = updated.OrderItems?.Sum(orderItems => orderItems.Quantity * orderItems.ClothingItem.Price) ?? 0m
             };
+            return orderInfoDto;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var order = await repo.GetByIdAsync(id);
-            if (order == null) return false;
+            var orderById = await repo.GetByIdAsync(id);
+            
+            if (orderById == null)
+            {
+                return false;
+            }
 
-            await repo.DeleteAsync(order);
+            await repo.DeleteAsync(orderById);
             return true;
         }
 
@@ -152,19 +158,20 @@ namespace Logic.Services
         {
             int skip = (pageNumber - 1) * pageSize;
             var orders = await repo.GetPagedWithDetailsAsync(skip, pageSize);
+            int totalCount = await repo.getAllCount();
 
-            var orderDtos = orders.Select(order => new OrderInfoDto
+            var orderDtos = orders.Select(p => new OrderInfoDto
             {
-                Id = order.Id,
-                OrderDate = order.OrderDate,
-                Status = order.Status,
-                UserId = order.UserId,
-                UserEmail = order.User.Email,
-                TotalItems = order.OrderItems?.Sum(orderItem => orderItem.Quantity) ?? 0,
-                TotalPrice = order.OrderItems?.Sum(orderItem => orderItem.Quantity * orderItem.ClothingItem.Price) ?? 0m
+                Id = p.Id,
+                OrderDate = p.OrderDate,
+                Status = p.Status,
+                UserId = p.UserId,
+                UserEmail = p.User.Email,
+                TotalItems = p.OrderItems?.Sum(orderItem => orderItem.Quantity) ?? 0,
+                TotalPrice = p.OrderItems?.Sum(orderItem => orderItem.Quantity * orderItem.ClothingItem.Price) ?? 0m
             }).ToList();
 
-            return new PagedList<OrderInfoDto>(orderDtos, pageNumber, pageSize);
+            return new PagedList<OrderInfoDto>(orderDtos, pageNumber, pageSize, totalCount);
         }
     }
 }

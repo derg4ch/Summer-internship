@@ -44,5 +44,10 @@ namespace Work_with_db.Repo
         {
             return await set.OrderBy(p => p.Id).Skip(skip).Take(take).ToListAsync();
         }
+
+        public async Task<int> getAllCounts()
+        {
+            return await set.CountAsync();
+        }
     }
 }

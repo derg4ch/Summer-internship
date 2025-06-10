@@ -9,6 +9,7 @@ namespace Work_with_db.Repo
 {
     public interface IOrderRepository : IGenericRepository<Order>
     {
+        Task<int> getAllCount();
         Task<IEnumerable<Order>> GetAllWithDetailsAsync();
         Task<Order?> GetByIdWithDetailsAsync(int id);
         Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId);

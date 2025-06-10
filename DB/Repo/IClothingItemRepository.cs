@@ -9,6 +9,7 @@ namespace Work_with_db.Repo
 {
     public interface IClothingItemRepository : IGenericRepository<ClothingItem>
     {
+        Task<int> getAllCount();
         Task<IEnumerable<ClothingItem>> GetAllWithDetailsAsync();
         Task<ClothingItem?> GetByIdWithDetailsAsync(int id);
         Task<IEnumerable<ClothingItem>> GetPagedWithDetailsAsync(int skip, int take);

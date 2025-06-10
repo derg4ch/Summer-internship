@@ -21,9 +21,9 @@ namespace Logic.Services
 
         public async Task<IEnumerable<SizeInfoDto>> GetAllWithClothingItemsCountAsync()
         {
-            var sizes = await repo.GetAllWithClothingItemsAsync();
+            var allSize = await repo.GetAllWithClothingItemsAsync();
 
-            return sizes.Select(s => new SizeInfoDto
+            return allSize.Select(s => new SizeInfoDto
             {
                 Id = s.Id,
                 Name = s.Name,
@@ -34,31 +34,39 @@ namespace Logic.Services
         public async Task<SizeInfoDto?> GetByIdAsync(int id)
         {
             Size? size = await repo.GetByIdAsync(id);
-            if (size == null) return null;
+            if (size == null)
+            {
+                return null;
+            }
 
-            var count = await repo.GetClothingItemsCountBySizeIdAsync(id);
-
-            return new SizeInfoDto
+            int count = await repo.GetClothingItemsCountBySizeIdAsync(id);
+            SizeInfoDto sizeInfoDto = new SizeInfoDto
             {
                 Id = size.Id,
                 Name = size.Name,
                 ClothingItemsCount = count
             };
+
+            return sizeInfoDto;
         }
 
         public async Task<SizeInfoDto?> GetByNameAsync(string name)
         {
             Size? size = await repo.GetByNameAsync(name);
-            if (size == null) return null;
+            if (size == null)
+            {
+                return null;
+            }
+            int count = await repo.GetClothingItemsCountBySizeIdAsync(size.Id);
 
-            var count = await repo.GetClothingItemsCountBySizeIdAsync(size.Id);
-
-            return new SizeInfoDto
+            SizeInfoDto sizeInfoDto = new SizeInfoDto
             {
                 Id = size.Id,
                 Name = size.Name,
                 ClothingItemsCount = count
             };
+
+            return sizeInfoDto;
         }
 
         public async Task<SizeInfoDto> CreateAsync(SizeNewDto newDto)
@@ -69,36 +77,45 @@ namespace Logic.Services
             };
 
             await repo.AddAsync(size);
-
-            return new SizeInfoDto
+            
+            SizeInfoDto sizeInfoDto = new SizeInfoDto
             {
                 Id = size.Id,
                 Name = size.Name,
                 ClothingItemsCount = 0
             };
+            return sizeInfoDto;
         }
 
         public async Task<SizeInfoDto?> UpdateAsync(int id, SizeEditDto editDto)
         {
             Size? size = await repo.GetByIdAsync(id);
-            if (size == null) return null;
+            if (size == null)
+            {
+                return null;
+            }
 
             size.Name = editDto.Name;
             await repo.UpdateAsync(size);
             
             int count = await repo.GetClothingItemsCountBySizeIdAsync(size.Id);
-            return new SizeInfoDto
+            
+            SizeInfoDto sizeInfoDto = new SizeInfoDto
             {
                 Id = size.Id,
                 Name = size.Name,
                 ClothingItemsCount = count
             };
+            return sizeInfoDto;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             Size? size = await repo.GetByIdAsync(id);
-            if (size == null) return false;
+            if (size == null)
+            {
+                return false;
+            }
 
             await repo.DeleteAsync(size);
             return true;

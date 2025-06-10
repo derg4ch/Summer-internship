@@ -41,7 +41,10 @@ namespace Logic.Services
         public async Task<UserInfoDto?> GetByEmailAsync(string email)
         {
             User? user = await repo.GetByEmailAsync(email);
-            if (user == null) return null;
+            if (user == null)
+            {
+                return null;
+            }
 
             int ordersCount = await repo.GetOrdersCountByUserIdAsync(user.Id);
 
@@ -57,8 +60,10 @@ namespace Logic.Services
         public async Task<UserInfoDto?> GetUserWithOrdersAsync(int userId)
         {
             User? user = await repo.GetUserWithOrdersAsync(userId);
-            if (user == null) return null;
-
+            if (user == null)
+            {
+                return null;
+            }
             return new UserInfoDto
             {
                 Id = user.Id,
@@ -70,32 +75,34 @@ namespace Logic.Services
 
         public async Task<IEnumerable<UserInfoDto>> GetAllWithOrdersAsync()
         {
-            var users = await repo.GetAllWithOrdersAsync();
+            var allUsers = await repo.GetAllWithOrdersAsync();
 
-            return users.Select(newUser => new UserInfoDto
+            return allUsers.Select(p => new UserInfoDto
             {
-                Id = newUser.Id,
-                Username = newUser.Username,
-                Email = newUser.Email,
-                OrdersCount = newUser.Orders?.Count ?? 0
+                Id = p.Id,
+                Username = p.Username,
+                Email = p.Email,
+                OrdersCount = p.Orders?.Count ?? 0
             });
         }
 
         public async Task<IEnumerable<UserInfoDto>> GetAllUsersAsync()
         {
-            var users = await repo.GetAllAsync();
+            var allUsers = await repo.GetAllAsync();
             List<UserInfoDto> userDtos = new List<UserInfoDto>();
             
-            foreach (User user in users)
+            foreach (User user in allUsers)
             {
                 int count = await repo.GetOrdersCountByUserIdAsync(user.Id);
-                userDtos.Add(new UserInfoDto
+                UserInfoDto userInfoDto = new UserInfoDto
                 {
                     Id = user.Id,
                     Username = user.Username,
                     Email = user.Email,
                     OrdersCount = count
-                });
+                };
+
+                userDtos.Add(userInfoDto);
             }
             return userDtos;
         }
@@ -109,14 +116,15 @@ namespace Logic.Services
             }
 
             int count = await repo.GetOrdersCountByUserIdAsync(user.Id);
-
-            return new UserInfoDto
+            UserInfoDto userInfoDto = new UserInfoDto
             {
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email,
                 OrdersCount = count
             };
+
+            return userInfoDto;
         }
 
         public async Task<UserInfoDto> CreateUserAsync(UserNewDto newUser)
@@ -129,14 +137,16 @@ namespace Logic.Services
             };
 
             await repo.AddAsync(user);
-
-            return new UserInfoDto
+           
+            UserInfoDto userInfoDto = new UserInfoDto
             {
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email,
                 OrdersCount = 0
             };
+
+            return userInfoDto;
         }
 
         public async Task<UserInfoDto?> UpdateUserAsync(int id, UserEditDto userEdit)
@@ -154,14 +164,15 @@ namespace Logic.Services
             await repo.UpdateAsync(user);
 
             int count = await repo.GetOrdersCountByUserIdAsync(user.Id);
-
-            return new UserInfoDto
+            
+            UserInfoDto userInfoDto = new UserInfoDto
             {
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email,
                 OrdersCount = count
             };
+            return userInfoDto;
         }
 
         public async Task<bool> DeleteUserAsync(int id)
@@ -176,36 +187,11 @@ namespace Logic.Services
             return true;
         }
 
-        //public async Task<PagedList<UserInfoDto>> GetPagedUsersAsync(int pageNumber, int pageSize)
-        //{
-        //    int skip = (pageNumber - 1) * pageSize;
-        //    int totalCount = await repo.GetTotalUsersCountAsync();
-        //    var users = await repo.GetPagedUsersAsync(skip, pageSize);
-
-        //    List<UserInfoDto> userDtos = new List<UserInfoDto>();
-
-        //    foreach (var user in users)
-        //    {
-        //        int ordersCount = await repo.GetOrdersCountByUserIdAsync(user.Id);
-
-        //        userDtos.Add(new UserInfoDto
-        //        {
-        //            Id = user.Id,
-        //            Username = user.Username,
-        //            Email = user.Email,
-        //            OrdersCount = ordersCount
-        //        });
-        //    }
-
-        //    return new PagedList<UserInfoDto>(userDtos, totalCount, pageNumber, pageSize);
-        //}
         public async Task<PagedList<UserInfoDto>> GetPagedUsersAsync(int pageNumber, int pageSize)
         {
             int skip = (pageNumber - 1) * pageSize;
-            Console.WriteLine($"[DEBUG] pageNumber = {pageNumber}, pageSize = {pageSize}, skip = {skip}");
-
             var users = await repo.GetPagedUsersAsync(skip, pageSize);
-            Console.WriteLine($"[DEBUG] users.Count = {users.Count}");
+            int totalCount = await repo.getAllCounts();
 
             var userDtos = users.Select(u => new UserInfoDto
             {
@@ -215,14 +201,7 @@ namespace Logic.Services
                 OrdersCount=users.Count
             }).ToList();
 
-            Console.WriteLine($"[DEBUG] userDtos.Count = {userDtos.Count}");
-            foreach (var dto in userDtos)
-            {
-                Console.WriteLine($"[DEBUG] dto.Id = {dto.Id}, Username = {dto.Username}, Email = {dto.Email}");
-            }
-
-            var pagedList = new PagedList<UserInfoDto>(userDtos, pageNumber, pageSize);
-
+            var pagedList = new PagedList<UserInfoDto>(userDtos, pageNumber, pageSize, totalCount);
             return pagedList;
         }
     }

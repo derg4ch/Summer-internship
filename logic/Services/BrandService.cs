@@ -21,8 +21,8 @@ namespace Logic.Services
 
         public async Task<IEnumerable<BrandInfoDto>> GetAllAsync()
         {
-            var brands = await repository.GetAllAsync();
-            return brands.Select(brand => new BrandInfoDto
+            var allBrands = await repository.GetAllAsync();
+            return allBrands.Select(brand => new BrandInfoDto
             {
                 Id = brand.Id,
                 Name = brand.Name,
@@ -37,13 +37,15 @@ namespace Logic.Services
             {
                 return null;
             }
-            
-            return new BrandInfoDto
+
+            BrandInfoDto brandInfoDto = new BrandInfoDto
             {
                 Id = brand.Id,
                 Name = brand.Name,
                 Country = brand.Country
             };
+
+            return brandInfoDto;
         }
 
         public async Task<BrandInfoDto> CreateAsync(BrandNewDto newBrand)
@@ -55,13 +57,14 @@ namespace Logic.Services
             };
 
             await repository.AddAsync(brand);
-
-            return new BrandInfoDto
+            BrandInfoDto brandInfoDto = new BrandInfoDto
             {
                 Id = brand.Id,
                 Name = brand.Name,
                 Country = brand.Country
             };
+
+            return brandInfoDto;
         }
 
         public async Task<bool> UpdateAsync(int id, BrandEditDto updatedBrand)

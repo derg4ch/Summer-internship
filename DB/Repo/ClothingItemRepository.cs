@@ -14,6 +14,11 @@ namespace Work_with_db.Repo
         {
         }
 
+        public async Task<int> getAllCount()
+        {
+            return await set.CountAsync();
+        }
+
         public async Task<IEnumerable<ClothingItem>> GetAllWithDetailsAsync()
         {
             return await set.Include(ci => ci.Size).Include(ci => ci.Brand).ToListAsync();

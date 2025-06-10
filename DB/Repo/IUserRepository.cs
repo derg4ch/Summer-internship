@@ -9,6 +9,7 @@ namespace Work_with_db.Repo
 {
     public interface IUserRepository : IGenericRepository<User>
     {
+        Task<int> getAllCounts();
         Task<User?> GetByUsernameAsync(string username);
         Task<User?> GetByEmailAsync(string email);
         Task<User?> GetUserWithOrdersAsync(int userId);

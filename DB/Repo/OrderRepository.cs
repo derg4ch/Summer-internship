@@ -39,5 +39,9 @@ namespace Work_with_db.Repo
             return await set.Include(o => o.User).Include(o => o.OrderItems).ThenInclude(oi => oi.ClothingItem).OrderBy(o => o.Id).Skip(skip).Take(take).ToListAsync();
         }
 
+        public async Task<int> getAllCount()
+        {
+            return await set.CountAsync();
+        }
     }
 }

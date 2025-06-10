@@ -10,6 +10,8 @@ namespace Logic
     {
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
+        public int totalCount { get; set; }
+        public int totalPages => (int)Math.Ceiling((double)totalCount / pageSize);
         public List<T> results { get; set; }
 
         public PagedList()
@@ -19,11 +21,12 @@ namespace Logic
             results = new List<T>();
         }
 
-        public PagedList(List<T> items, int pageNumber, int pageSize)
+        public PagedList(List<T> items, int pageNumber, int pageSize, int totalCount)
         {
             results = items;
             this.pageNumber = pageNumber;
             this.pageSize = pageSize;
+            this.totalCount = totalCount;
         }
     }
 }

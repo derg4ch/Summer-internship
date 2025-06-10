@@ -70,5 +70,12 @@ namespace Application.Controllers
             var pagedItems = await service.GetPagedClothingItemsAsync(pageNumber, pageSize);
             return Ok(pagedItems);
         }
+
+        [HttpGet("filtered")]
+        public async Task<ActionResult<PagedList<ClothingItemInfoDto>>> GetFilteredClothingItems([FromQuery] ClothingItemFilterDto filter)
+        {
+            var filteredItems = await service.GetFilteredClothingItemsAsync(filter);
+            return Ok(filteredItems);
+        }
     }
 }

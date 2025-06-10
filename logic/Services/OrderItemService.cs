@@ -13,7 +13,7 @@ namespace Logic.Services
     public class OrderItemService : IOrderItemService
     {
         private IOrderItemRepository repo;
-        private readonly IClothingItemRepository clothingItemRepo;
+        private IClothingItemRepository clothingItemRepo;
 
         public OrderItemService(IOrderItemRepository repo, IClothingItemRepository clothingItemRepo)
         {
@@ -24,18 +24,18 @@ namespace Logic.Services
 
         public async Task<IEnumerable<OrderItemInfoDto>> GetAllWithDetailsAsync()
         {
-            var items = await repo.GetAllWithDetailsAsync();
+            var allOrderItems = await repo.GetAllWithDetailsAsync();
 
-            return items.Select(orderItem => new OrderItemInfoDto
+            return allOrderItems.Select(p => new OrderItemInfoDto
             {
-                Id = orderItem.Id,
-                OrderId = orderItem.OrderId,
-                OrderDate = orderItem.Order.OrderDate,
-                OrderStatus = orderItem.Order.Status,
-                ClothingItemId = orderItem.ClothingItemId,
-                ClothingItemName = orderItem.ClothingItem.Name,
-                UnitPrice = orderItem.ClothingItem.Price,
-                Quantity = orderItem.Quantity
+                Id = p.Id,
+                OrderId = p.OrderId,
+                OrderDate = p.Order.OrderDate,
+                OrderStatus = p.Order.Status,
+                ClothingItemId = p.ClothingItemId,
+                ClothingItemName = p.ClothingItem.Name,
+                UnitPrice = p.ClothingItem.Price,
+                Quantity = p.Quantity
             });
         }
 
@@ -46,8 +46,7 @@ namespace Logic.Services
             {
                 return null;
             }
-
-            return new OrderItemInfoDto
+            OrderItemInfoDto orderItemInfoDto = new OrderItemInfoDto
             {
                 Id = orderItem.Id,
                 OrderId = orderItem.OrderId,
@@ -58,22 +57,24 @@ namespace Logic.Services
                 UnitPrice = orderItem.ClothingItem.Price,
                 Quantity = orderItem.Quantity
             };
+
+            return orderItemInfoDto;
         }
 
         public async Task<IEnumerable<OrderItemInfoDto>> GetByOrderIdAsync(int orderId)
         {
-            var items = await repo.GetByOrderIdAsync(orderId);
+            var ordersById = await repo.GetByOrderIdAsync(orderId);
 
-            return items.Select(orderItem => new OrderItemInfoDto
+            return ordersById.Select(p => new OrderItemInfoDto
             {
-                Id = orderItem.Id,
-                OrderId = orderItem.OrderId,
-                OrderDate = orderItem.Order.OrderDate,
-                OrderStatus = orderItem.Order.Status,
-                ClothingItemId = orderItem.ClothingItemId,
-                ClothingItemName = orderItem.ClothingItem.Name,
-                UnitPrice = orderItem.ClothingItem.Price,
-                Quantity = orderItem.Quantity
+                Id = p.Id,
+                OrderId = p.OrderId,
+                OrderDate = p.Order.OrderDate,
+                OrderStatus = p.Order.Status,
+                ClothingItemId = p.ClothingItemId,
+                ClothingItemName = p.ClothingItem.Name,
+                UnitPrice = p.ClothingItem.Price,
+                Quantity = p.Quantity
             });
         }
 
@@ -103,8 +104,7 @@ namespace Logic.Services
             await repo.AddAsync(orderItem);
 
             OrderItem? created = await repo.GetByIdWithDetailsAsync(orderItem.Id);
-
-            return new OrderItemInfoDto
+            OrderItemInfoDto orderItemInfoDto = new OrderItemInfoDto
             {
                 Id = created!.Id,
                 OrderId = created.OrderId,
@@ -115,6 +115,8 @@ namespace Logic.Services
                 UnitPrice = created.ClothingItem.Price,
                 Quantity = created.Quantity
             };
+
+            return orderItemInfoDto;
         }
 
         public async Task<OrderItemInfoDto?> UpdateAsync(int id, OrderItemEditDto editDto)
@@ -151,8 +153,7 @@ namespace Logic.Services
             await clothingItemRepo.UpdateAsync(clothingItem);
 
             var updated = await repo.GetByIdWithDetailsAsync(id);
-
-            return new OrderItemInfoDto
+            OrderItemInfoDto orderItemInfoDto = new OrderItemInfoDto
             {
                 Id = updated!.Id,
                 OrderId = updated.OrderId,
@@ -163,6 +164,8 @@ namespace Logic.Services
                 UnitPrice = updated.ClothingItem.Price,
                 Quantity = updated.Quantity
             };
+
+            return orderItemInfoDto;
         }
 
         public async Task<bool> DeleteAsync(int id)

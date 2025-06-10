@@ -14,6 +14,7 @@ namespace Logic.Interfaces
         Task<ClothingItemInfoDto> CreateAsync(ClothingItemNewDto newDto);
         Task<ClothingItemInfoDto?> UpdateAsync(int id, ClothingItemEditDto editDto);
         Task<bool> DeleteAsync(int id);
+        Task<PagedList<ClothingItemInfoDto>> GetFilteredClothingItemsAsync(ClothingItemFilterDto filter);
         Task<PagedList<ClothingItemInfoDto>> GetPagedClothingItemsAsync(int pageNumber, int pageSize);
     }
 }
