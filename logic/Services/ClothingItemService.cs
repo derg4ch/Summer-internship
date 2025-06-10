@@ -198,9 +198,72 @@ namespace Logic.Services
                 queryable = queryable.Where(x => x.Quantity <= filter.MaxQuantity.Value);
             }
 
+            if (!string.IsNullOrWhiteSpace(filter.SortBy))
+            {
+                if (filter.SortBy.ToLower() == "name")
+                {
+                    if (filter.SortDirection?.ToLower() == "desc")
+                    {
+                        queryable = queryable.OrderByDescending(x => x.Name);
+                    }
+                    else
+                    {
+                        queryable = queryable.OrderBy(x => x.Name);
+                    }
+                }
+                else if (filter.SortBy.ToLower() == "price")
+                {
+                    if (filter.SortDirection?.ToLower() == "desc")
+                    {
+                        queryable = queryable.OrderByDescending(x => x.Price);
+                    }
+                    else
+                    {
+                        queryable = queryable.OrderBy(x => x.Price);
+                    }
+                }
+                else if (filter.SortBy.ToLower() == "quantity")
+                {
+                    if (filter.SortDirection?.ToLower() == "desc")
+                    {
+                        queryable = queryable.OrderByDescending(x => x.Quantity);
+                    }
+                    else
+                    {
+                        queryable = queryable.OrderBy(x => x.Quantity);
+                    }
+                }
+                else if (filter.SortBy.ToLower() == "brandname")
+                {
+                    if (filter.SortDirection?.ToLower() == "desc")
+                    {
+                        queryable = queryable.OrderByDescending(x => x.Brand.Name);
+                    }
+                    else
+                    {
+                        queryable = queryable.OrderBy(x => x.Brand.Name);
+                    }
+                }
+                else if (filter.SortBy.ToLower() == "sizename")
+                {
+                    if (filter.SortDirection?.ToLower() == "desc")
+                    {
+                        queryable = queryable.OrderByDescending(x => x.Size.Name);
+                    }
+                    else
+                    {
+                        queryable = queryable.OrderBy(x => x.Size.Name);
+                    }
+                }
+                else
+                {
+                    queryable = queryable.OrderBy(x => x.Id); 
+                }
+            }
+
+            int totalCount = queryable.Count();
             int skip = (filter.PageNumber - 1) * filter.PageSize;
             var paginatedFiltered = queryable.Skip(skip).Take(filter.PageSize);
-            int totalCount = queryable.Count();
 
             var result = paginatedFiltered.Select(p => new ClothingItemInfoDto
             {
