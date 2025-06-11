@@ -17,7 +17,7 @@ namespace Work_with_db.Repo
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
-            return await set.FirstOrDefaultAsync(u => u.Username == username);
+            return await set.FirstOrDefaultAsync(u => u.UserName == username);
         }
 
         public async Task<User?> GetByEmailAsync(string email)

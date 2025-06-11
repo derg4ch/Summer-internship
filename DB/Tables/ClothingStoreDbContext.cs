@@ -4,16 +4,18 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Work_with_db.Tables
 {
-    public class ClothingStoreDbContext : DbContext
+    public class ClothingStoreDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
-        public ClothingStoreDbContext(DbContextOptions<ClothingStoreDbContext> options): base(options)
-        {
-
+        public ClothingStoreDbContext(DbContextOptions<ClothingStoreDbContext> options): base(options) {
+        
         }
+
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<ClothingItem> ClothingItems { get; set; }
@@ -57,12 +59,6 @@ namespace Work_with_db.Tables
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.ToTable("Users");
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Password).IsRequired();
                 entity.HasMany(e => e.Orders).WithOne(o => o.User).HasForeignKey(o => o.UserId).OnDelete(DeleteBehavior.Cascade);
             });
 

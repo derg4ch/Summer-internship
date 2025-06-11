@@ -16,103 +16,136 @@ namespace Application.Controllers
             this.service = service;
         }
 
-
         [HttpGet("by-username/{username}")]
         public async Task<ActionResult<UserInfoDto>> GetByUsername(string username)
         {
-            UserInfoDto? user = await service.GetByUsernameAsync(username);
-            if (user == null)
+            try
             {
-                return NotFound();
+                UserInfoDto? user = await service.GetByUsernameAsync(username);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
             }
-            return Ok(user);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
-
 
         [HttpGet("by-email/{email}")]
         public async Task<ActionResult<UserInfoDto>> GetByEmail(string email)
         {
-            var user = await service.GetByEmailAsync(email);
-            if (user == null)
+            try
             {
-                return NotFound();
+                var user = await service.GetByEmailAsync(email);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
             }
-            return Ok(user);
-        }
-
-
-        [HttpGet("{id}/with-orders")]
-        public async Task<ActionResult<UserInfoDto>> GetUserWithOrders(int id)
-        {
-            UserInfoDto? user = await service.GetUserWithOrdersAsync(id);
-            if (user == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return StatusCode(500, new { message = ex.Message });
             }
-            return Ok(user);
-        }
-
-
-        [HttpGet("with-orders")]
-        public async Task<ActionResult<IEnumerable<UserInfoDto>>> GetAllWithOrders()
-        {
-            var users = await service.GetAllWithOrdersAsync();
-            return Ok(users);
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserInfoDto>>> GetAllUsers()
         {
-            var users = await service.GetAllUsersAsync();
-            return Ok(users);
+            try
+            {
+                var users = await service.GetAllUsersAsync();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
-
 
         [HttpGet("{id}")]
         public async Task<ActionResult<UserInfoDto>> GetUserById(int id)
         {
-            UserInfoDto? user = await service.GetUserByIdAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                UserInfoDto? user = await service.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
             }
-            return Ok(user);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<UserInfoDto>> CreateUser([FromBody] UserNewDto newUser)
         {
-            var createdUser = await service.CreateUserAsync(newUser);
-            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+            try
+            {
+                var createdUser = await service.CreateUserAsync(newUser);
+                return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<UserInfoDto>> UpdateUser(int id, [FromBody] UserEditDto userEdit)
         {
-            UserInfoDto? updatedUser = await service.UpdateUserAsync(id, userEdit);
-            if (updatedUser == null)
+            try
             {
-                return NotFound();
+                UserInfoDto? updatedUser = await service.UpdateUserAsync(id, userEdit);
+                if (updatedUser == null)
+                {
+                    return NotFound();
+                }
+                return Ok(updatedUser);
             }
-            return Ok(updatedUser);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
-            var deleted = await service.DeleteUserAsync(id);
-            if (!deleted)
+            try
             {
-                return NotFound();
+                var deleted = await service.DeleteUserAsync(id);
+                if (!deleted)
+                {
+                    return NotFound();
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpGet("paginated")]
         public async Task<ActionResult<PagedList<UserInfoDto>>> GetPagedUsers(int pageNumber = 1, int pageSize = 10)
         {
-            var pagedUsers = await service.GetPagedUsersAsync(pageNumber, pageSize);
-            return Ok(pagedUsers);
+            try
+            {
+                var pagedUsers = await service.GetPagedUsersAsync(pageNumber, pageSize);
+                return Ok(pagedUsers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Work_with_db.Tables;
 
@@ -11,9 +12,11 @@ using Work_with_db.Tables;
 namespace Work_with_db.Migrations
 {
     [DbContext(typeof(ClothingStoreDbContext))]
-    partial class ClothingStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250611075646_IdentityUserAndInitialCreate")]
+    partial class IdentityUserAndInitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

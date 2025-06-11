@@ -1,59 +1,98 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Bogus;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Work_with_db.Tables;
 
 class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        var options = new DbContextOptionsBuilder<ClothingStoreDbContext>()
-            .UseSqlServer("Server=DESKTOP-TRDJNPD;Database=Clothes;Trusted_Connection=True;Encrypt=False;")
-            .Options;
+        var services = new ServiceCollection();
 
-        using var context = new ClothingStoreDbContext(options);
+        services.AddDbContext<ClothingStoreDbContext>(options =>
+            options.UseSqlServer("Server=DESKTOP-TRDJNPD;Database=Clothes;Trusted_Connection=True;Encrypt=False;"));
+
+        var serviceProvider = services.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ClothingStoreDbContext>();
+        PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
 
         Console.WriteLine("Start seed...");
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
 
-        List<Size> sizes = new List<Size> { 
-            new Size { Name = "XS" }, 
-            new Size { Name = "S" }, 
-            new Size { Name = "M" }, 
-            new Size { Name = "L" }, 
-            new Size { Name = "XL" } 
-        };
+        List<Size> sizes = new List<Size> { new Size { Name = "XS" }, new Size { Name = "S" }, new Size { Name = "M" }, new Size { Name = "L" }, new Size { Name = "XL" }};
         context.Sizes.AddRange(sizes);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         Faker<Brand> brandFaker = new Faker<Brand>()
             .RuleFor(b => b.Name, f => f.Company.CompanyName())
             .RuleFor(b => b.Country, f =>
             {
                 string country = f.Address.Country();
-                if (country.Length > 10)
+
+                if(country.Length > 10)
                 {
                     return country.Substring(0, 10);
                 }
-                else return country;
+                else
+                {
+                    return country;
+                }
             });
-
 
         List<Brand> brands = brandFaker.Generate(5);
         context.Brands.AddRange(brands);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
-        Faker<User> userFaker = new Faker<User>()
-            .RuleFor(u => u.Username, f => f.Internet.UserName())
-            .RuleFor(u => u.Email, f => f.Internet.Email())
-            .RuleFor(u => u.Password, f => f.Internet.Password());
+        List<IdentityRole<int>> roles = new List<IdentityRole<int>> { new IdentityRole<int> { Name = "Customer", NormalizedName = "CUSTOMER" }, new IdentityRole<int> { Name = "Manager", NormalizedName = "MANAGER" } };
+        context.Roles.AddRange(roles);
+        await context.SaveChangesAsync();
 
-        List<User> users = userFaker.Generate(10);
+        Faker faker = new Faker();
+        List<User> users = new List<User>();
+
+        for (int i = 0; i < 10; i++)
+        {
+            string username = faker.Internet.UserName();
+            string email = faker.Internet.Email();
+            string password = "VerySecretPassword1234!";
+
+            User user = new User
+            {
+                UserName = username,
+                Email = email,
+                NormalizedUserName = username.ToUpper(),
+                NormalizedEmail = email.ToUpper(),
+                PasswordHash = passwordHasher.HashPassword(null, password)
+            };
+
+            users.Add(user);
+        }
+
         context.Users.AddRange(users);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
+
+        List<IdentityUserRole<int>> userRoles = new List<IdentityUserRole<int>>();
+
+        foreach (var user in users)
+        {
+            var randomRole = faker.PickRandom(roles);
+
+            userRoles.Add(new IdentityUserRole<int>
+            {
+                UserId = user.Id,
+                RoleId = randomRole.Id
+            });
+        }
+
+        context.UserRoles.AddRange(userRoles);
+        await context.SaveChangesAsync();
 
         Faker<ClothingItem> clothingItemFaker = new Faker<ClothingItem>()
             .RuleFor(ci => ci.Name, f => f.Commerce.ProductName())
@@ -64,7 +103,7 @@ class Program
 
         List<ClothingItem> clothingItems = clothingItemFaker.Generate(20);
         context.ClothingItems.AddRange(clothingItems);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         Faker<Order> orderFaker = new Faker<Order>()
             .RuleFor(o => o.UserId, f => f.PickRandom(users).Id)
@@ -73,7 +112,7 @@ class Program
 
         List<Order> orders = orderFaker.Generate(15);
         context.Orders.AddRange(orders);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         Faker<OrderItem> orderItemFaker = new Faker<OrderItem>()
             .RuleFor(oi => oi.OrderId, f => f.PickRandom(orders).Id)
@@ -82,7 +121,7 @@ class Program
 
         List<OrderItem> orderItems = orderItemFaker.Generate(30);
         context.OrderItems.AddRange(orderItems);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         Console.WriteLine("Seed completed!");
     }

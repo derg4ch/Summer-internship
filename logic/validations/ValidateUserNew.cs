@@ -24,8 +24,21 @@ namespace Logic.validations
                 .MaximumLength(100)
                 .WithMessage("Email lenght cannot be bigger than 100 symbols");
 
-            RuleFor(p => p.Password).NotEmpty()
-                .WithMessage("Password is required and cannot be empty");
+            RuleFor(p => p.Password)
+                .NotEmpty()
+                .WithMessage("Password is required and cannot be empty")
+                .MinimumLength(6)
+                .WithMessage("Password must be at least 6 characters long")
+                .Must(p => p.Any(char.IsDigit))
+                .WithMessage("Password must contain at least one digit")
+                .Must(p => p.Any(char.IsLower))
+                .WithMessage("Password must contain at least one lowercase letter")
+                .Must(p => p.Any(char.IsUpper))
+                .WithMessage("Password must contain at least one uppercase letter")
+                .Must(p => p.Any(ch => !char.IsLetterOrDigit(ch)))
+                .WithMessage("Password must contain at least one non-alphanumeric character")
+                .Must(p => p.Distinct().Count() >= 1)
+                .WithMessage("Password must contain at least one unique character");
         }
     }
 }
