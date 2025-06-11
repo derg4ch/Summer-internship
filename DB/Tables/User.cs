@@ -10,5 +10,6 @@ namespace Work_with_db.Tables
     public class User : IdentityUser<int>
     {
         public ICollection<Order> Orders { get; set; }
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

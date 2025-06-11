@@ -80,7 +80,7 @@ class Program
 
         List<IdentityUserRole<int>> userRoles = new List<IdentityUserRole<int>>();
 
-        foreach (var user in users)
+        foreach (User user in users)
         {
             var randomRole = faker.PickRandom(roles);
 

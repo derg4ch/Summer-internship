@@ -12,8 +12,8 @@ using Work_with_db.Tables;
 namespace Work_with_db.Migrations
 {
     [DbContext(typeof(ClothingStoreDbContext))]
-    [Migration("20250611075646_IdentityUserAndInitialCreate")]
-    partial class IdentityUserAndInitialCreate
+    [Migration("20250611105409_InitialCreation")]
+    partial class InitialCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -267,6 +267,31 @@ namespace Work_with_db.Migrations
                     b.ToTable("OrderItems", (string)null);
                 });
 
+            modelBuilder.Entity("Work_with_db.Tables.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens", (string)null);
+                });
+
             modelBuilder.Entity("Work_with_db.Tables.Size", b =>
                 {
                     b.Property<int>("Id")
@@ -453,6 +478,17 @@ namespace Work_with_db.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("Work_with_db.Tables.RefreshToken", b =>
+                {
+                    b.HasOne("Work_with_db.Tables.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Work_with_db.Tables.Brand", b =>
                 {
                     b.Navigation("ClothingItems");
@@ -476,6 +512,8 @@ namespace Work_with_db.Migrations
             modelBuilder.Entity("Work_with_db.Tables.User", b =>
                 {
                     b.Navigation("Orders");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

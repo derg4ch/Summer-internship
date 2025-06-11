@@ -17,6 +17,11 @@ namespace Work_with_db.ConfigureTable
                    .WithOne(o => o.User)
                    .HasForeignKey(o => o.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(u => u.RefreshTokens)
+               .WithOne(rt => rt.User)
+               .HasForeignKey(rt => rt.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
