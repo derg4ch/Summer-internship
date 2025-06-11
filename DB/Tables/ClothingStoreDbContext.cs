@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Work_with_db.Configure;
+using Work_with_db.ConfigureTable;
 
 namespace Work_with_db.Tables
 {
@@ -27,59 +29,12 @@ namespace Work_with_db.Tables
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Size>(entity =>
-            {
-                entity.ToTable("Sizes");
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(10);
-                entity.HasMany(e => e.ClothingItems).WithOne(ci => ci.Size).HasForeignKey(ci => ci.SizeId).OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<Brand>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.Country).IsRequired().HasMaxLength(50);
-
-                entity.HasMany(e => e.ClothingItems).WithOne(ci => ci.Brand).HasForeignKey(ci => ci.BrandId).OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<ClothingItem>(entity =>
-            {
-                entity.ToTable("ClothingItems");
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Price).IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(e => e.Quantity).IsRequired();
-
-                entity.HasMany(e => e.OrderItems).WithOne(oi => oi.ClothingItem).HasForeignKey(oi => oi.ClothingItemId).OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasMany(e => e.Orders).WithOne(o => o.User).HasForeignKey(o => o.UserId).OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<Order>(entity =>
-            {
-                entity.ToTable("Orders");
-
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.OrderDate).IsRequired();
-                entity.Property(e => e.Status).IsRequired().HasMaxLength(20);
-                entity.HasMany(e => e.OrderItems).WithOne(oi => oi.Order).HasForeignKey(oi => oi.OrderId).OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<OrderItem>(entity =>
-            {
-                entity.ToTable("OrderItems");
-
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Quantity).IsRequired();
-            });
+            modelBuilder.ApplyConfiguration(new SizeConfiguration());
+            modelBuilder.ApplyConfiguration(new BrandConfiguration());
+            modelBuilder.ApplyConfiguration(new ClothingItemConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
         }
     }
 }
