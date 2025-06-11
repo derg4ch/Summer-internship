@@ -14,11 +14,11 @@ namespace Logic.validations
         public ValidateLoginDto() 
         {
             RuleFor(p => p.Username).NotEmpty()
-                .WithMessage("Username is required and cannot be empty")
+                .WithMessage("Username is required and cannot be empty");
 
             RuleFor(p => p.Password)
                 .NotEmpty()
-                .WithMessage("Password is required and cannot be empty")
+                .WithMessage("Password is required and cannot be empty");
         }
     }
 }

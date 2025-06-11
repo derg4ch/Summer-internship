@@ -1,5 +1,6 @@
 ﻿using Logic.dto.size;
 using Logic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Controllers
@@ -45,6 +46,7 @@ namespace Application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult<SizeInfoDto>> Create([FromBody] SizeNewDto newDto)
         {
             var created = await service.CreateAsync(newDto);
@@ -52,6 +54,7 @@ namespace Application.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult<SizeInfoDto>> Update(int id, [FromBody] SizeEditDto editDto)
         {
             var updated = await service.UpdateAsync(id, editDto);
@@ -63,6 +66,7 @@ namespace Application.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Delete(int id)
         {
             var deleted = await service.DeleteAsync(id);

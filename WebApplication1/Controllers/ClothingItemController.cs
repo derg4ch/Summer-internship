@@ -1,6 +1,7 @@
 ﻿using Logic;
 using Logic.dto.clothing_item;
 using Logic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Controllers
@@ -35,6 +36,7 @@ namespace Application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult<ClothingItemInfoDto>> Create([FromBody] ClothingItemNewDto newDto)
         {
             var created = await service.CreateAsync(newDto);
@@ -42,6 +44,7 @@ namespace Application.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult<ClothingItemInfoDto>> Update(int id, [FromBody] ClothingItemEditDto editDto)
         {
             var updated = await service.UpdateAsync(id, editDto);
@@ -53,6 +56,7 @@ namespace Application.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Delete(int id)
         {
             var deleted = await service.DeleteAsync(id);

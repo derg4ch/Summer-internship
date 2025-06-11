@@ -15,7 +15,7 @@ namespace Logic.Interfaces
         Task<IEnumerable<UserInfoDto>> GetAllUsersAsync();
         Task<UserInfoDto?> GetUserByIdAsync(int id);
         Task<UserInfoDto> CreateUserAsync(UserNewDto newUser);
-        Task<UserInfoDto?> UpdateUserAsync(int id, UserEditDto userEdit);
+        Task<UserInfoDto?> UpdateUserAsync(int id, UserEditDto userEdit, bool canChangeRole);
         Task<bool> DeleteUserAsync(int id);
     }
 }

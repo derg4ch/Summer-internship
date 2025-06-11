@@ -20,8 +20,7 @@ namespace Logic.Services
         private readonly ClothingStoreDbContext context;
         private readonly PasswordHasher<User> passwordHasher;
 
-        public UserService(IUserRepository userRepository, UserManager<User> userManager,
-                          RoleManager<IdentityRole<int>> roleManager, ClothingStoreDbContext context)
+        public UserService(IUserRepository userRepository, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, ClothingStoreDbContext context)
         {
             this.repo = userRepository;
             this.userManager = userManager;
@@ -136,11 +135,11 @@ namespace Logic.Services
                 throw new Exception($"Failed to create user");
             }
 
-            var customerRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Customer");
+            var customerRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Manager");
             
             if (customerRole != null)
             {
-                await userManager.AddToRoleAsync(user, "Customer");
+                await userManager.AddToRoleAsync(user, "Manager");
             }
 
             return new UserInfoDto
@@ -152,7 +151,7 @@ namespace Logic.Services
             };
         }
 
-        public async Task<UserInfoDto?> UpdateUserAsync(int id, UserEditDto userEdit)
+        public async Task<UserInfoDto?> UpdateUserAsync(int id, UserEditDto userEdit, bool canChangeRole)
         {
             User user = await userManager.FindByIdAsync(id.ToString());
             if (user == null)
@@ -184,6 +183,26 @@ namespace Logic.Services
             if (!result.Succeeded)
             {
                 throw new Exception($"Failed to update user");
+            }
+
+            // Логіка зміни ролі тільки якщо canChangeRole == true
+            if (canChangeRole && !string.IsNullOrEmpty(userEdit.Role))
+            {
+                var currentRoles = await userManager.GetRolesAsync(user);
+                var roleToSet = userEdit.Role;
+
+                // Зняти всі ролі (або лише першу, якщо у вас одна роль на користувача)
+                var removeResult = await userManager.RemoveFromRolesAsync(user, currentRoles);
+                if (!removeResult.Succeeded)
+                {
+                    throw new Exception("Failed to remove current roles");
+                }
+
+                var addRoleResult = await userManager.AddToRoleAsync(user, roleToSet);
+                if (!addRoleResult.Succeeded)
+                {
+                    throw new Exception($"Failed to add role {roleToSet}");
+                }
             }
 
             int count = await repo.GetOrdersCountByUserIdAsync(user.Id);

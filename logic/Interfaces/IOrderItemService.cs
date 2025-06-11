@@ -9,6 +9,7 @@ namespace Logic.Interfaces
 {
     public interface IOrderItemService
     {
+        Task<int> GetOrderUserIdAsync(int orderId);
         Task<IEnumerable<OrderItemInfoDto>> GetAllWithDetailsAsync();
         Task<OrderItemInfoDto?> GetByIdWithDetailsAsync(int id);
         Task<IEnumerable<OrderItemInfoDto>> GetByOrderIdAsync(int orderId);

@@ -14,13 +14,14 @@ namespace Logic.Services
     {
         private IOrderItemRepository repo;
         private IClothingItemRepository clothingItemRepo;
+        private IOrderRepository orderRepo;
 
-        public OrderItemService(IOrderItemRepository repo, IClothingItemRepository clothingItemRepo)
+        public OrderItemService(IOrderItemRepository repo, IClothingItemRepository clothingItemRepo, IOrderRepository orderRepo)
         {
             this.repo = repo;
             this.clothingItemRepo = clothingItemRepo;
+            this.orderRepo = orderRepo;
         }
-
 
         public async Task<IEnumerable<OrderItemInfoDto>> GetAllWithDetailsAsync()
         {
@@ -35,7 +36,8 @@ namespace Logic.Services
                 ClothingItemId = p.ClothingItemId,
                 ClothingItemName = p.ClothingItem.Name,
                 UnitPrice = p.ClothingItem.Price,
-                Quantity = p.Quantity
+                Quantity = p.Quantity,
+                OrderUserId = p.Order.UserId
             });
         }
 
@@ -55,7 +57,8 @@ namespace Logic.Services
                 ClothingItemId = orderItem.ClothingItemId,
                 ClothingItemName = orderItem.ClothingItem.Name,
                 UnitPrice = orderItem.ClothingItem.Price,
-                Quantity = orderItem.Quantity
+                Quantity = orderItem.Quantity,
+                OrderUserId = orderItem.Order.UserId 
             };
 
             return orderItemInfoDto;
@@ -74,7 +77,8 @@ namespace Logic.Services
                 ClothingItemId = p.ClothingItemId,
                 ClothingItemName = p.ClothingItem.Name,
                 UnitPrice = p.ClothingItem.Price,
-                Quantity = p.Quantity
+                Quantity = p.Quantity,
+                OrderUserId = p.Order.UserId
             });
         }
 
@@ -113,7 +117,8 @@ namespace Logic.Services
                 ClothingItemId = created.ClothingItemId,
                 ClothingItemName = created.ClothingItem.Name,
                 UnitPrice = created.ClothingItem.Price,
-                Quantity = created.Quantity
+                Quantity = created.Quantity,
+                OrderUserId = created.Order.UserId 
             };
 
             return orderItemInfoDto;
@@ -162,7 +167,8 @@ namespace Logic.Services
                 ClothingItemId = updated.ClothingItemId,
                 ClothingItemName = updated.ClothingItem.Name,
                 UnitPrice = updated.ClothingItem.Price,
-                Quantity = updated.Quantity
+                Quantity = updated.Quantity,
+                OrderUserId = updated.Order.UserId
             };
 
             return orderItemInfoDto;
@@ -178,6 +184,16 @@ namespace Logic.Services
 
             await repo.DeleteAsync(orderItem);
             return true;
+        }
+
+        public async Task<int> GetOrderUserIdAsync(int orderId)
+        {
+            var order = await orderRepo.GetByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new Exception($"Order with id {orderId} not found.");
+            }
+            return order.UserId;
         }
     }
 }

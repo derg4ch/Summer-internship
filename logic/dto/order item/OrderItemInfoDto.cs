@@ -9,7 +9,7 @@ namespace Logic.dto.order_item
     public class OrderItemInfoDto
     {
         public int Id { get; set; }
-
+        public int OrderUserId { get; set; }
         public int OrderId { get; set; }
         public DateTime OrderDate { get; set; }
         public string OrderStatus { get; set; }

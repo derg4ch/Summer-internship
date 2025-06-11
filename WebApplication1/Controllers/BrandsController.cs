@@ -1,5 +1,6 @@
 ﻿using Logic.dto.brand;
 using Logic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Controllers
@@ -34,6 +35,7 @@ namespace Application.Controllers
             return Ok(brand);
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public async Task<ActionResult<BrandInfoDto>> Create([FromBody] BrandNewDto newBrand)
         {
@@ -46,6 +48,7 @@ namespace Application.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdBrand.Id }, createdBrand);
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] BrandEditDto updatedBrand)
         {
@@ -63,6 +66,7 @@ namespace Application.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
