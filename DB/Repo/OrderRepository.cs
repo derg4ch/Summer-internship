@@ -15,6 +15,12 @@ namespace Work_with_db.Repo
 
         }
 
+        public async Task AddOrderItemAsync(OrderItem orderItem)
+        {
+            context.OrderItems.Add(orderItem);
+            await context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Order>> GetAllWithDetailsAsync()
         {
             return await set.Include(o => o.User).Include(o => o.OrderItems).ThenInclude(oi => oi.ClothingItem).ToListAsync();

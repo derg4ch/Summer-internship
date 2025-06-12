@@ -10,7 +10,7 @@ namespace Application.Controllers
     [Route("api/clothingItem")]
     public class ClothingItemController : ControllerBase
     {
-        private readonly IClothingItemService service;
+        private IClothingItemService service;
 
         public ClothingItemController(IClothingItemService service)
         {

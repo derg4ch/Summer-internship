@@ -130,6 +130,11 @@ namespace Logic.services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public async Task<RefreshToken> GetRefreshTokenAsync(string refreshToken)
+        {
+            return await database.RefreshTokens.FirstOrDefaultAsync(rt => rt.Token == refreshToken);
+        }
+
         private string GenerateRefreshToken()
         {
             var randomNumber = new byte[64];

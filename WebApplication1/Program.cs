@@ -13,6 +13,7 @@ using System;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Logic.services;
+using Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,25 +54,6 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
     options.Password.RequiredUniqueChars = 1;
 }).AddEntityFrameworkStores<ClothingStoreDbContext>().AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-            ValidAudience = builder.Configuration["JWT:ValidAudience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])),
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "ClothingStore API", Version = "v1" });
@@ -101,9 +83,30 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+        ValidAudience = builder.Configuration["JWT:ValidAudience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])),
+        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+    };
+});
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+app.UseExceptionHandling();
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,4 +1,5 @@
-﻿using Logic;
+﻿using System.Security.Claims;
+using Logic;
 using Logic.dto.order;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,7 @@ namespace Application.Controllers
     [Route("api/order")]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderService service;
+        private IOrderService service;
 
         public OrderController(IOrderService service)
         {
@@ -30,11 +31,20 @@ namespace Application.Controllers
         public async Task<ActionResult<OrderInfoDto>> GetById(int id)
         {
             var order = await service.GetByIdWithDetailsAsync(id);
-            if (order == null) return NotFound();
+            if (order == null)
+            {
+                return NotFound();
+            }
 
             if (!User.IsInRole("Manager"))
             {
-                var userId = int.Parse(User.FindFirst("id").Value); 
+                Claim? claim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (claim == null)
+                {
+                    return Unauthorized();
+                }
+
+                int userId = int.Parse(claim.Value);
                 if (order.UserId != userId)
                 {
                     return Forbid();
@@ -45,18 +55,18 @@ namespace Application.Controllers
         }
 
         [Authorize]
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<OrderInfoDto>>> GetByUserId(int userId)
+        [HttpGet("user/my")]
+        public async Task<ActionResult<IEnumerable<OrderInfoDto>>> GetMyOrders()
         {
-            if (!User.IsInRole("Manager"))
+            Claim? claim = User.FindFirst(ClaimTypes.NameIdentifier);
+            
+            if (claim == null)
             {
-                int currentUserId = int.Parse(User.FindFirst("id").Value);
-                if (currentUserId != userId)
-                {
-                    return Forbid();
-                }
+                return Unauthorized();
             }
 
+            int userId = int.Parse(claim.Value);
+            
             var orders = await service.GetOrdersByUserIdAsync(userId);
             return Ok(orders);
         }
@@ -73,6 +83,16 @@ namespace Application.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderInfoDto>> Create(OrderNewDto newOrder)
         {
+            Claim? claim = User.FindFirst(ClaimTypes.NameIdentifier);
+            
+            if (claim == null)
+            {
+                return Unauthorized();
+            }
+
+            int userId = int.Parse(claim.Value);
+            newOrder.UserId = userId;
+
             var createdOrder = await service.CreateAsync(newOrder);
             return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder);
         }
@@ -82,10 +102,12 @@ namespace Application.Controllers
         public async Task<ActionResult<OrderInfoDto>> UpdateStatus(int id, OrderEditDto editDto)
         {
             var updatedOrder = await service.UpdateStatusAsync(id, editDto);
+            
             if (updatedOrder == null)
             {
                 return NotFound();
             }
+            
             return Ok(updatedOrder);
         }
 
@@ -94,6 +116,7 @@ namespace Application.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var order = await service.GetByIdWithDetailsAsync(id);
+            
             if (order == null)
             {
                 return NotFound();
@@ -101,7 +124,14 @@ namespace Application.Controllers
 
             if (!User.IsInRole("Manager"))
             {
-                int userId = int.Parse(User.FindFirst("id").Value);
+                Claim? claim = User.FindFirst(ClaimTypes.NameIdentifier);
+                
+                if (claim == null)
+                {
+                    return Unauthorized();
+                }
+
+                int userId = int.Parse(claim.Value);
                 if (order.UserId != userId)
                 {
                     return Forbid();

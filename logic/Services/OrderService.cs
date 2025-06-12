@@ -94,14 +94,22 @@ namespace Logic.Services
             {
                 UserId = newDto.UserId,
                 OrderDate = newDto.OrderDate,
-                Status = newDto.Status,
+                Status = "Pending",
             };
 
-            await repo.AddAsync(order);
+            await repo.AddAsync(order); 
 
+            OrderItem orderItem = new OrderItem
+            {
+                OrderId = order.Id,
+                ClothingItemId = newDto.ClothingItemId,
+                Quantity = newDto.Quantity
+            };
+
+            await repo.AddOrderItemAsync(orderItem);
             var created = await repo.GetByIdWithDetailsAsync(order.Id);
 
-            OrderInfoDto orderInfoDto = new OrderInfoDto
+            return new OrderInfoDto
             {
                 Id = created!.Id,
                 OrderDate = created.OrderDate,
@@ -111,8 +119,6 @@ namespace Logic.Services
                 TotalItems = created.OrderItems?.Sum(oi => oi.Quantity) ?? 0,
                 TotalPrice = created.OrderItems?.Sum(oi => oi.Quantity * oi.ClothingItem.Price) ?? 0m
             };
-
-            return orderInfoDto;
         }
 
         public async Task<OrderInfoDto?> UpdateStatusAsync(int id, OrderEditDto editDto)

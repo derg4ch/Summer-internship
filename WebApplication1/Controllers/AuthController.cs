@@ -42,18 +42,18 @@ namespace Application.Controllers
             return Ok(new { accessToken = tokens.AccessToken, refreshToken = tokens.RefreshToken });
         }
 
-        [Authorize]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshDto request)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
+            var savedRefreshToken = await service.GetRefreshTokenAsync(request.RefreshToken);
+
+            if (savedRefreshToken == null || savedRefreshToken.ExpiryDate <= DateTime.UtcNow)
             {
                 return Unauthorized();
             }
-            int userId = int.Parse(userIdClaim.Value);
 
-            var tokens = await service.RefreshTokensAsync(userId, request.RefreshToken);
+            var tokens = await service.RefreshTokensAsync(savedRefreshToken.UserId, request.RefreshToken);
+
             if (tokens.AccessToken == null)
             {
                 return Unauthorized();

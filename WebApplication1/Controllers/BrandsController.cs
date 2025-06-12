@@ -9,7 +9,7 @@ namespace Application.Controllers
     [Route("api/brands")]
     public class BrandsController : ControllerBase
     {
-        private readonly IBrandService brandService;
+        private IBrandService brandService;
 
         public BrandsController(IBrandService brandService)
         {

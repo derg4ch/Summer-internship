@@ -178,14 +178,21 @@ namespace Application.Controllers
         private bool IsOwnerOrManager(int userId)
         {
             var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
             if (currentUserIdClaim == null)
             {
                 return false;
             }
 
             bool isManager = User.IsInRole("Manager");
-
-            return isManager || currentUserIdClaim == userId.ToString();
+            if (isManager || currentUserIdClaim == userId.ToString())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
