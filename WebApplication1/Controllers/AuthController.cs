@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Logic.dto.authorization;
+using Logic.dto.users;
 using Logic.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
@@ -19,7 +20,7 @@ namespace Application.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] Logic.dto.authorization.RegisterDto request)
+        public async Task<IActionResult> Register([FromBody] UserNewDto request)
         {
             var result = await service.RegisterAsync(request.Username, request.Email, request.Password);
             if (!result.Succeeded)

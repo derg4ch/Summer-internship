@@ -31,7 +31,10 @@ namespace Logic.services
 
         public async Task<IdentityResult> RegisterAsync(string username, string email, string password)
         {
-            User user = new User { UserName = username, Email = email };
+            User user = new User { 
+                UserName = username, 
+                Email = email 
+            };
 
             var result = await userManage.CreateAsync(user, password);
             
@@ -74,9 +77,7 @@ namespace Logic.services
 
         public async Task<(string AccessToken, string RefreshToken)> RefreshTokensAsync(int userId, string refreshToken)
         {
-            var savedRefreshToken = await database.RefreshTokens
-                .Where(rt => rt.UserId == userId && rt.Token == refreshToken)
-                .FirstOrDefaultAsync();
+            var savedRefreshToken = await database.RefreshTokens.Where(rt => rt.UserId == userId && rt.Token == refreshToken).FirstOrDefaultAsync();
 
             if (savedRefreshToken == null || savedRefreshToken.ExpiryDate <= DateTime.UtcNow)
             {

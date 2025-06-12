@@ -5,18 +5,18 @@ namespace Application
 {
     public class ExceptionHandlingMiddleware
     {
-        private readonly RequestDelegate _next;
+        private RequestDelegate next;
 
         public ExceptionHandlingMiddleware(RequestDelegate next)
         {
-            _next = next;
+            this.next = next;
         }
 
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context); 
+                await next(context); 
             }
             catch (Exception ex)
             {

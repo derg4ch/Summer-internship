@@ -69,7 +69,7 @@ namespace Application.Controllers
                 if (!User.IsInRole("Manager"))
                 {
                     int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                    var orderUserId = await service.GetOrderUserIdAsync(orderId);
+                    int orderUserId = await service.GetOrderUserIdAsync(orderId);
 
                     if (orderUserId != userId)
                     {
