@@ -94,12 +94,6 @@ namespace Application.Controllers
                 if (!User.IsInRole("Manager"))
                 {
                     int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                    
-                    if (newDto.UserId != userId)
-                    {
-                        return Forbid();
-                    }
-
                     int orderUserId = await service.GetOrderUserIdAsync(newDto.OrderId);
                     if (orderUserId != userId)
                     {

@@ -12,8 +12,8 @@ using Work_with_db.Tables;
 namespace Work_with_db.Migrations
 {
     [DbContext(typeof(ClothingStoreDbContext))]
-    [Migration("20250611105409_InitialCreation")]
-    partial class InitialCreation
+    [Migration("20250612135049_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
