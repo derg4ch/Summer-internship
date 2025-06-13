@@ -26,7 +26,7 @@ namespace Logic.Services
             return allOrders.Select(p => new OrderInfoDto
             {
                 Id = p.Id,
-                OrderDate = p.OrderDate,
+                OrderDate = p.OrderDate.ToUniversalTime(),
                 Status = p.Status,
                 UserId = p.UserId,
                 UserEmail = p.User.Email,
@@ -45,7 +45,7 @@ namespace Logic.Services
             OrderInfoDto orderInfoDto = new OrderInfoDto
             {
                 Id = orderById.Id,
-                OrderDate = orderById.OrderDate,
+                OrderDate = orderById.OrderDate.ToUniversalTime(),
                 Status = orderById.Status,
                 UserId = orderById.UserId,
                 UserEmail = orderById.User.Email,
@@ -63,7 +63,7 @@ namespace Logic.Services
             return orders.Select(p => new OrderInfoDto
             {
                 Id = p.Id,
-                OrderDate = p.OrderDate,
+                OrderDate = p.OrderDate.ToUniversalTime(),
                 Status = p.Status,
                 UserId = p.UserId,
                 UserEmail = p.User.Email,
@@ -79,7 +79,7 @@ namespace Logic.Services
             return ordersByStatus.Select(p => new OrderInfoDto
             {
                 Id = p.Id,
-                OrderDate = p.OrderDate,
+                OrderDate = p.OrderDate.ToUniversalTime(),
                 Status = p.Status,
                 UserId = p.UserId,
                 UserEmail = p.User.Email,
@@ -93,7 +93,7 @@ namespace Logic.Services
             Order order = new Order
             {
                 UserId = newDto.UserId,
-                OrderDate = newDto.OrderDate,
+                OrderDate = newDto.OrderDate.ToUniversalTime(),
                 Status = "Pending",
             };
 
@@ -112,7 +112,7 @@ namespace Logic.Services
             return new OrderInfoDto
             {
                 Id = created!.Id,
-                OrderDate = created.OrderDate,
+                OrderDate = created.OrderDate.ToUniversalTime(),
                 Status = created.Status,
                 UserId = created.UserId,
                 UserEmail = created.User.Email,
@@ -137,7 +137,7 @@ namespace Logic.Services
             OrderInfoDto orderInfoDto = new OrderInfoDto
             {
                 Id = updated!.Id,
-                OrderDate = updated.OrderDate,
+                OrderDate = updated.OrderDate.ToUniversalTime(),
                 Status = updated.Status,
                 UserId = updated.UserId,
                 UserEmail = updated.User.Email,
@@ -169,7 +169,7 @@ namespace Logic.Services
             var orderDtos = orders.Select(p => new OrderInfoDto
             {
                 Id = p.Id,
-                OrderDate = p.OrderDate,
+                OrderDate = p.OrderDate.ToUniversalTime(),
                 Status = p.Status,
                 UserId = p.UserId,
                 UserEmail = p.User.Email,

@@ -65,7 +65,7 @@ namespace Logic.services
             RefreshToken refreshTokenEntity = new RefreshToken
             {
                 Token = refreshToken,
-                ExpiryDate = DateTime.UtcNow.AddDays(30),
+                ExpiryDate = DateTime.UtcNow.AddDays(30).ToUniversalTime(),
                 UserId = user.Id
             };
 
@@ -79,7 +79,7 @@ namespace Logic.services
         {
             var savedRefreshToken = await database.RefreshTokens.Where(rt => rt.UserId == userId && rt.Token == refreshToken).FirstOrDefaultAsync();
 
-            if (savedRefreshToken == null || savedRefreshToken.ExpiryDate <= DateTime.UtcNow)
+            if (savedRefreshToken == null || savedRefreshToken.ExpiryDate <= DateTime.UtcNow.ToUniversalTime())
             {
                 return (null, null);
             }
@@ -96,7 +96,7 @@ namespace Logic.services
             RefreshToken newRefreshTokenEntity = new RefreshToken
             {
                 Token = newRefreshToken,
-                ExpiryDate = DateTime.UtcNow.AddDays(30),
+                ExpiryDate = DateTime.UtcNow.AddDays(30).ToUniversalTime(),
                 UserId = user.Id
             };
 

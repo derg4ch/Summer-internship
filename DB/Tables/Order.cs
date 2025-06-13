@@ -13,7 +13,7 @@ namespace Work_with_db.Tables
         public int UserId { get; set; }
         public User User { get; set; }
 
-        public DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.Now.ToUniversalTime();
         public string Status { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; }

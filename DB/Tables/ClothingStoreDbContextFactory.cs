@@ -13,7 +13,10 @@ namespace Work_with_db.Tables
         public ClothingStoreDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ClothingStoreDbContext>();
-            optionsBuilder.UseSqlServer("Server=DESKTOP-TRDJNPD;Database=Clothes;Trusted_Connection=True;Encrypt=False;");
+
+            var connectionString = "Host=localhost;Port=5432;Database=Clothes;Username=postgres;Password=root;";
+            optionsBuilder.UseNpgsql(connectionString);
+
 
             return new ClothingStoreDbContext(optionsBuilder.Options);
         }

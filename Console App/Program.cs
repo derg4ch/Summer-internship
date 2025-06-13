@@ -15,7 +15,9 @@ class Program
         var services = new ServiceCollection();
 
         services.AddDbContext<ClothingStoreDbContext>(options =>
-            options.UseSqlServer("Server=DESKTOP-TRDJNPD;Database=Clothes;Trusted_Connection=True;Encrypt=False;"));
+    options.UseNpgsql("Host=localhost;Port=5432;Database=Clothes;Username=postgres;Password=root"));
+
+
 
         var serviceProvider = services.BuildServiceProvider();
         using var scope = serviceProvider.CreateScope();
@@ -107,7 +109,7 @@ class Program
 
         Faker<Order> orderFaker = new Faker<Order>()
             .RuleFor(o => o.UserId, f => f.PickRandom(users).Id)
-            .RuleFor(o => o.OrderDate, f => f.Date.Past(1))
+            .RuleFor(o => o.OrderDate, f => f.Date.Past(1).ToUniversalTime())
             .RuleFor(o => o.Status, f => f.PickRandom("Pending", "Completed", "Shipped"));
 
         List<Order> orders = orderFaker.Generate(15);
